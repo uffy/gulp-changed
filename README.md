@@ -7,7 +7,8 @@ Only pass through changed files
 
 
 # 使用方法
-
+```
 require("gulp-changed"); // 在使用 gulp 之前引入即可
 
 gulp.task...
+```
