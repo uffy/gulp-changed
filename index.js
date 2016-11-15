@@ -9,7 +9,7 @@ var through2 = require('through2');
 var mkdirp = require('mkdirp');
 var fs = require('graceful-fs');
 
-var writeContents = require(__dirname + '/node_modules/vinyl-fs/lib/dest/writeContents');
+var writeContents = require('../vinyl-fs/lib/dest/writeContents');
 
 gulp.dest = function(outFolder, opt) {
     opt = opt || {};
