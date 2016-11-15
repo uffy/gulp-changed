@@ -1,4 +1,6 @@
-# laravel-gulp-changed
-Laravel elixir only pass through changed files
+#gulp-changed
+Only pass through changed files
 
-Just like https://github.com/sindresorhus/gulp-changed
+替换 gulp.dest 函数，当文件未更新时，不再覆盖编译写入新文件。
+
+支持 Laravel-elixir#6.0.*
