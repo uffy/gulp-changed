@@ -7,8 +7,21 @@ Only pass through changed files
 
 
 # 使用方法
+
+
 ```
-require("gulp-changed"); // 在使用 gulp 之前引入即可
+require("gulp-changed").global(); // 注册全局事件
 
 gulp.task...
+```
+
+
+```
+var gulpDest = require("gulp-changed");
+
+gulp.src(...)
+    .pipe(一些操作...)
+    .pipe(gulpDest(outFolder, opt));
+    
+
 ```

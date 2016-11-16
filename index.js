@@ -11,7 +11,7 @@ var fs = require('graceful-fs');
 
 var writeContents = require('../vinyl-fs/lib/dest/writeContents');
 
-gulp.dest = function(outFolder, opt) {
+function dest(outFolder, opt) {
     opt = opt || {};
     if (typeof outFolder !== 'string' && typeof outFolder !== 'function') {
         throw new Error('Invalid output folder');
@@ -75,7 +75,11 @@ gulp.dest = function(outFolder, opt) {
     // TODO: option for either backpressure or lossy
     stream.resume();
     return stream;
+}
+
+dest.global = function () {
+    gulp.dest = dest;
+    return gulp;
 };
 
-module.exports = gulp;
-
+module.exports = dest;
