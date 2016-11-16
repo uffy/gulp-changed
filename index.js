@@ -58,10 +58,15 @@ gulp.dest = function(outFolder, opt) {
             // 获取上次编译的文件状态
             fs.stat(writePath, function (err, targetStat) {
                 // 当本次要编译的文件修改时间 较上次更新、或上次编译的文件不存在时，写入编译文件。
-                if( (!err && file.stat.mtime > targetStat.mtime) || (err && err.code == "ENOENT") ){
-                    return writeContents(writePath, file, cb);
+                if(
+                    (!err && file.stat.mtime > targetStat.mtime)        // 有新修改
+                    || (err && err.code == "ENOENT")                    // 新文件
+                    || file.stat.mtime.toString() == "Invalid Date"     // 无法获取文件更新时间(rev-manifest.json)
+                ){
+                    writeContents(writePath, file, cb);
+                }else{
+                    return cb(null, file);
                 }
-                cb();
             });
         });
     }
@@ -73,3 +78,4 @@ gulp.dest = function(outFolder, opt) {
 };
 
 module.exports = gulp;
+
