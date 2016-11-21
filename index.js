@@ -8,8 +8,9 @@ var path = require('path');
 var through2 = require('through2');
 var mkdirp = require('mkdirp');
 var fs = require('graceful-fs');
+var crypto = require("crypto");
 
-var writeContents = require('../vinyl-fs/lib/dest/writeContents');
+var writeContents = require(path.normalize(require.resolve("vinyl-fs").replace('index.js', '') + "/lib/dest/writeContents"));
 
 function dest(outFolder, opt) {
     opt = opt || {};
@@ -55,18 +56,18 @@ function dest(outFolder, opt) {
             if (err) {
                 return cb(err);
             }
-            // 获取上次编译的文件状态
-            fs.stat(writePath, function (err, targetStat) {
-                // 当本次要编译的文件修改时间 较上次更新、或上次编译的文件不存在时，写入编译文件。
-                if(
-                    (!err && file.stat.mtime > targetStat.mtime)        // 有新修改
-                    || (err && err.code == "ENOENT")                    // 新文件
-                    || file.stat.mtime.toString() == "Invalid Date"     // 无法获取文件更新时间(rev-manifest.json)
-                ){
-                    writeContents(writePath, file, cb);
-                }else{
-                    return cb(null, file);
+
+            fs.readFile(writePath, function (err, data) {
+                if( !err ){
+                    var writeFileHash = crypto.createHash('sha1').update(data).digest('hex');
+                    var oldFileHash = crypto.createHash('sha1').update(file.contents).digest('hex');
+
+                    // 对比 现在生成文件的 hash，对比之前的hash，如果一致就跳过写入文件。
+                    if( writeFileHash == oldFileHash ){
+                        return cb(null, file);
+                    }
                 }
+                writeContents(writePath, file, cb);
             });
         });
     }
@@ -83,3 +84,4 @@ dest.global = function () {
 };
 
 module.exports = dest;
+
